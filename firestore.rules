@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global default-deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Food Donations Collection
+    // Public read so donors, NGOs, and couriers can see surplus food across all users in real time
+    match /donations/{donationId} {
+      allow read: if true;
+
+      allow create: if isValidId(donationId)
+        && incoming().title is string && incoming().title.size() > 0 && incoming().title.size() <= 300
+        && incoming().category is string && incoming().category.size() <= 100
+        && incoming().status in ['Available', 'Draft', 'Requested']
+        && incoming().servings is number && incoming().servings > 0;
+
+      allow update: if isValidId(donationId)
+        && incoming().title is string && incoming().title.size() > 0 && incoming().title.size() <= 300
+        && incoming().status in ['Draft', 'Available', 'Requested', 'Accepted', 'Pickup Scheduled', 'Collected', 'Distributed', 'Expired', 'Cancelled', 'Rejected'];
+
+      allow delete: if false;
+    }
+
+    // NGOs Directory Collection
+    match /ngos/{ngoId} {
+      allow read: if true;
+      allow create: if isValidId(ngoId)
+        && incoming().name is string && incoming().name.size() <= 200
+        && incoming().verificationStatus in ['Pending Review', 'Verified', 'Rejected', 'Suspended'];
+      allow update: if isValidId(ngoId)
+        && incoming().name is string
+        && incoming().verificationStatus in ['Pending Review', 'Verified', 'Rejected', 'Suspended'];
+      allow delete: if false;
+    }
+
+    // Incident Reports Collection
+    match /incidentReports/{reportId} {
+      allow read: if true;
+      allow create: if isValidId(reportId)
+        && incoming().category is string && incoming().category.size() <= 100
+        && incoming().severity is string && incoming().severity.size() <= 50
+        && incoming().details is string && incoming().details.size() <= 2000;
+      allow update, delete: if false;
+    }
+
+    // Connection test document
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "FoodBridge AI",
+  "description": "Smart Food Donation Network connecting surplus food donors with verified NGOs, food banks, and shelters for safe and swift redistribution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

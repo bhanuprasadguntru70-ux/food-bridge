@@ -1,0 +1,109 @@
+{
+  "entities": {
+    "foodDonation": {
+      "title": "FoodDonation",
+      "description": "Surplus food donation batch submitted by donors and claimed/tracked by NGOs",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 300 },
+        "category": { "type": "string", "maxLength": 100 },
+        "servings": { "type": "number" },
+        "estimatedWeightKg": { "type": "number" },
+        "quantity": { "type": "number" },
+        "quantityUnit": { "type": "string", "maxLength": 50 },
+        "dietaryType": { "type": "string", "maxLength": 50 },
+        "preparationTime": { "type": "string" },
+        "earliestPickupTime": { "type": "string" },
+        "safePickupDeadline": { "type": "string" },
+        "storageCondition": { "type": "string", "maxLength": 100 },
+        "storageTemperature": { "type": "string", "maxLength": 50 },
+        "packagingType": { "type": "string", "maxLength": 200 },
+        "allergens": { "type": "array" },
+        "ingredientNotes": { "type": "string", "maxLength": 1000 },
+        "temperatureLoggedAtPrep": { "type": "string", "maxLength": 100 },
+        "hygieneCertified": { "type": "boolean" },
+        "donorDeclarationSigned": { "type": "boolean" },
+        "status": { "type": "string", "maxLength": 50 },
+        "claimedByNgoId": { "type": "string", "maxLength": 128 },
+        "claimedByNgoName": { "type": "string", "maxLength": 200 },
+        "requestedQuantity": { "type": "number" },
+        "pickupScheduledTime": { "type": "string" },
+        "proposedPickupTime": { "type": "string" },
+        "verificationPin": { "type": "string", "maxLength": 10 },
+        "instructionsForPickup": { "type": "string", "maxLength": 1000 },
+        "distributionLocation": { "type": "string", "maxLength": 200 },
+        "beneficiaryCount": { "type": "number" },
+        "imageUrl": { "type": "string", "maxLength": 2000 },
+        "isDemo": { "type": "boolean" },
+        "disputeNote": { "type": "string", "maxLength": 1000 },
+        "cancellationReason": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["title", "category", "servings", "dietaryType", "safePickupDeadline", "status"]
+    },
+    "ngo": {
+      "title": "NGO",
+      "description": "Verified charity, shelter, or food bank organization profile with accreditation details",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 200 },
+        "type": { "type": "string", "maxLength": 100 },
+        "registrationNumber": { "type": "string", "maxLength": 100 },
+        "verificationStatus": { "type": "string", "maxLength": 50, "enum": ["Pending Review", "Verified", "Rejected", "Suspended"] },
+        "verified": { "type": "boolean" },
+        "servingsCapacityPerDay": { "type": "number" },
+        "serviceAreas": { "type": "array" },
+        "city": { "type": "string", "maxLength": 100 },
+        "pinCodes": { "type": "array" },
+        "maxCollectionRadiusKm": { "type": "number" },
+        "beneficiaryTypes": { "type": "array" },
+        "acceptedFoodCategories": { "type": "array" },
+        "storageFacilities": { "type": "array" },
+        "operatingHours": { "type": "string", "maxLength": 100 },
+        "emergencyPickupAvailable": { "type": "boolean" },
+        "documentType": { "type": "string", "maxLength": 100 },
+        "documentFileName": { "type": "string", "maxLength": 200 },
+        "documentVerifiedNotes": { "type": "string", "maxLength": 500 },
+        "vehicles": { "type": "array" },
+        "address": { "type": "string", "maxLength": 300 },
+        "contactPerson": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "email": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "totalRescuesCompleted": { "type": "number" },
+        "isDemo": { "type": "boolean" }
+      },
+      "required": ["name", "type", "registrationNumber", "verificationStatus"]
+    },
+    "incidentReport": {
+      "title": "IncidentReport",
+      "description": "Safety incident or quality issue reported for a food donation",
+      "type": "object",
+      "properties": {
+        "donationId": { "type": "string", "maxLength": 128 },
+        "donationTitle": { "type": "string", "maxLength": 300 },
+        "reporterRole": { "type": "string", "maxLength": 50 },
+        "reporterName": { "type": "string", "maxLength": 150 },
+        "category": { "type": "string", "maxLength": 100 },
+        "severity": { "type": "string", "maxLength": 50 },
+        "details": { "type": "string", "maxLength": 2000 },
+        "timestamp": { "type": "string" },
+        "status": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["category", "severity", "details", "status"]
+    }
+  },
+  "firestore": {
+    "/donations/{donationId}": {
+      "schema": { "$ref": "#/entities/foodDonation" },
+      "description": "Surplus food donation listings accessible across donor and NGO users in real time"
+    },
+    "/ngos/{ngoId}": {
+      "schema": { "$ref": "#/entities/ngo" },
+      "description": "Directory of accredited charity partners and community kitchens"
+    },
+    "/incidentReports/{reportId}": {
+      "schema": { "$ref": "#/entities/incidentReport" },
+      "description": "Safety incident and quality inspection tickets"
+    }
+  }
+}
